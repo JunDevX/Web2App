@@ -1,5 +1,7 @@
 # README Translation Guide
 
+[Russian](../README.md) | [English](./readme-en.md) | Help with Translation
+
 ## Мы нуждаемся в вашей помощи!
 
 Если вы хотите помочь в переводе README.md на другие языки, мы будем очень благодарны!
@@ -149,7 +151,7 @@ I am ready for this and will be able to complete the translation within a week.
 languages/
 ├── readme-en.md      # English
 ├── readme-fr.md      # French
-├─�� readme-de.md      # German
+├── readme-de.md      # German
 ├── readme-es.md      # Spanish
 ├── readme-ru.md      # Russian (current)
 ├── readme-zh.md      # Chinese
