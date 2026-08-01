@@ -1,5 +1,7 @@
 # Web2App (W2A)
 
+Russian | [English](./languages/readme-en.md) | [Help with Translation](./languages/readme-help.md)
+
 Приложение для преобразования веб-страницы в полнофункциональное настольное приложение.
 
 ## Описание
