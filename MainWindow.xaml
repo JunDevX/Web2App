@@ -1,39 +1,69 @@
-﻿<Window x:Class="Web2AppLauncher.MainWindow"
+﻿<ui:FluentWindow x:Class="Web2AppLauncher.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Генератор Web2App" Height="480" Width="550"
-        WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
-    <Grid Margin="20">
-        <StackPanel VerticalAlignment="Center">
-            <TextBlock Text="Cоздание Web2App Приложения" FontSize="20" FontWeight="Bold" Margin="0,0,0,20" HorizontalAlignment="Center"/>
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        Title="Генератор Web2App" 
+        Height="600" Width="600"
+        WindowStartupLocation="CenterScreen"
+        ExtendsContentIntoTitleBar="True"
+        WindowCornerPreference="Round">
 
-            <!-- URL -->
-            <TextBlock Text="URL Адрес:" FontWeight="SemiBold"/>
-            <TextBox x:Name="TxtUrl" Margin="0,5,0,15" Padding="6" TextChanged="TxtUrl_TextChanged"/>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/> <!-- Место для панели заголовка -->
+            <RowDefinition Height="*"/>    <!-- Основной контент -->
+        </Grid.RowDefinitions>
 
-            <!-- Название -->
-            <TextBlock Text="Название приложения:" FontWeight="SemiBold"/>
-            <TextBox x:Name="TxtName" Margin="0,5,0,15" Padding="6"/>
+        <!-- Панель заголовка с крестиком, свернуть и развернуть -->
+        <ui:TitleBar Grid.Row="0" Title="Генератор Web2App" ShowMinimize="True" ShowMaximize="True" ShowClose="True" />
 
-            <!-- Иконка -->
-            <TextBlock Text="Иконка (.ico или .png):" FontWeight="SemiBold"/>
-            <Grid Margin="0,5,0,15">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <TextBox x:Name="TxtIcon" Padding="6" IsReadOnly="True"/>
-                <Button Grid.Column="1" Content="Обзор..." Width="80" Margin="10,0,0,0" Click="BtnBrowseIcon_Click"/>
+        <!-- Основной контент с прокруткой (сдвинут в Row="1") -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <Grid Margin="24">
+                <StackPanel>
+                    
+                    <!-- Заголовок -->
+                    <TextBlock Text="Создание Web2App" FontSize="28" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorPrimaryBrush}" Margin="0,0,0,4"/>
+                    <TextBlock Text="Превратите любой веб-сайт в нативное приложение Windows 11" FontSize="14" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,24"/>
+
+                    <!-- Карточка: Основные настройки -->
+                    <ui:Card Padding="16" Margin="0,0,0,16">
+                        <StackPanel>
+                            <TextBlock Text="Основные настройки" FontWeight="SemiBold" FontSize="16" Foreground="{DynamicResource TextFillColorPrimaryBrush}" Margin="0,0,0,12"/>
+                            
+                            <TextBlock Text="URL адрес" FontWeight="Medium" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                            <ui:TextBox x:Name="TxtUrl" PlaceholderText="https://example.com" TextChanged="TxtUrl_TextChanged" Margin="0,0,0,12"/>
+
+                            <TextBlock Text="Название приложения" FontWeight="Medium" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                            <ui:TextBox x:Name="TxtName" PlaceholderText="Мое приложение"/>
+                        </StackPanel>
+                    </ui:Card>
+
+                    <!-- Карточка: Дополнительно -->
+                    <ui:Card Padding="16" Margin="0,0,0,16">
+                        <StackPanel>
+                            <TextBlock Text="Дополнительно" FontWeight="SemiBold" FontSize="16" Foreground="{DynamicResource TextFillColorPrimaryBrush}" Margin="0,0,0,12"/>
+                            
+                            <TextBlock Text="Иконка (.ico или .png)" FontWeight="Medium" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                            <Grid Margin="0,0,0,12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <ui:TextBox x:Name="TxtIcon" IsReadOnly="True" PlaceholderText="Иконка не выбрана" Margin="0,0,8,0"/>
+                                <ui:Button Grid.Column="1" Content="Обзор..." Click="BtnBrowseIcon_Click"/>
+                            </Grid>
+
+                            <TextBlock Text="User-Agent" FontWeight="Medium" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                            <ui:TextBox x:Name="TxtUserAgent" Text="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </ui:Card>
+
+                    <!-- Кнопка действия -->
+                    <ui:Button Content="Создать приложение" Appearance="Primary" Height="44" FontSize="15" FontWeight="SemiBold" HorizontalAlignment="Stretch" Click="BtnCreate_Click"/>
+                    
+                </StackPanel>
             </Grid>
-
-            <!-- UserAgent -->
-            <TextBlock Text="User-Agent:" FontWeight="SemiBold"/>
-            <TextBox x:Name="TxtUserAgent" Margin="0,5,0,20" Padding="6" 
-                     Text="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"/>
-
-            <!-- Кнопка сборки -->
-            <Button Content="Создать Web2App Приложение" Height="42" Background="#007ACC" Foreground="White" 
-                    FontWeight="Bold" FontSize="14" Click="BtnCreate_Click"/>
-        </StackPanel>
+        </ScrollViewer>
     </Grid>
-</Window>
+</ui:FluentWindow>
