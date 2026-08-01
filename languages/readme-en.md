@@ -1,5 +1,7 @@
 # Web2App (W2A)
 
+[Russian](../README.md) | [English](./readme-en.md) | Help with Translation
+
 Convert any website into a full-featured desktop application.
 
 ## Description
