@@ -11,10 +11,10 @@ jobs:
     runs-on: windows-latest
     
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     
     - name: Setup .NET
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '8.0.x'
     
@@ -32,30 +32,30 @@ jobs:
       run: |
         Compress-Archive -Path ./publish-windows -DestinationPath Web2App-v1.0.0-windows.zip
     
-    - name: Upload Windows Build
-      uses: actions/upload-artifact@v3
+    - name: Upload Windows Build Artifact
+      uses: actions/upload-artifact@v4
       with:
         name: windows-build
         path: Web2App-v1.0.0-windows.zip
+        retention-days: 1
   
   create-release:
     needs: build-windows
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     
     - name: Download Windows Build
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: windows-build
     
-    - name: Create Release
-      uses: actions/create-release@v1
-      id: create_release
+    - name: Create Release and Upload Asset
+      uses: softprops/action-gh-release@v1
       with:
         tag_name: v1.0.0
-        release_name: Release 1.0.0
+        name: Release 1.0.0
         body: |
           # Web2App v1.0.0 - Initial Release
           
@@ -67,6 +67,9 @@ jobs:
           - User-Agent configuration for each application
           - Isolated directory for each application
           - Configuration saved in JSON format
+          
+          ## What's Included
+          - **Web2App-v1.0.0-windows.zip** - Windows application (self-contained)
           
           ## System Requirements
           - Windows 7 or higher
@@ -82,17 +85,12 @@ jobs:
           - [README](https://github.com/JunDevX/Web2App/blob/main/README.md)
           - [English README](https://github.com/JunDevX/Web2App/blob/main/languages/readme-en.md)
           - [Contributing Guidelines](https://github.com/JunDevX/Web2App/blob/main/CONTRIBUTING.md)
+          
+          ---
+          
+          **Made with ❤️ for the developer community**
+        files: Web2App-v1.0.0-windows.zip
         draft: false
         prerelease: false
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    
-    - name: Upload Windows Release Asset
-      uses: actions/upload-release-asset@v1
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./Web2App-v1.0.0-windows.zip
-        asset_name: Web2App-v1.0.0-windows.zip
-        asset_content_type: application/zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
