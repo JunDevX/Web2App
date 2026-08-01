@@ -30,18 +30,20 @@ jobs:
     - name: Create Windows ZIP
       shell: powershell
       run: |
-        Compress-Archive -Path ./publish-windows -DestinationPath Web2App-v1.0.0-windows.zip
+        Compress-Archive -Path ./publish-windows/* -DestinationPath Web2App-windows.zip
     
     - name: Upload Windows Build Artifact
       uses: actions/upload-artifact@v4
       with:
         name: windows-build
-        path: Web2App-v1.0.0-windows.zip
+        path: Web2App-windows.zip
         retention-days: 1
-  
+
   create-release:
     needs: build-windows
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # 1. ИСПРАВЛЕНИЕ ОШИБКИ 403: Даем права на создание релизов
     
     steps:
     - uses: actions/checkout@v4
@@ -52,12 +54,12 @@ jobs:
         name: windows-build
     
     - name: Create Release and Upload Asset
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2 # 2. ОБНОВЛЕНИЕ: Заменили v1 на v2 (убирает Warning про Node 20)
       with:
-        tag_name: v1.0.0
-        name: Release 1.0.0
+        tag_name: ${{ github.ref_name }} # 3. ДИНАМИЧЕСКИЙ ТЕГ: Берет тег из события (например, v1.0.1, v2.0.0)
+        name: Release ${{ github.ref_name }}
         body: |
-          # Web2App v1.0.0 - Initial Release
+          # Web2App ${{ github.ref_name }} - Release
           
           ## Features
           - Create desktop applications from web addresses
@@ -69,7 +71,7 @@ jobs:
           - Configuration saved in JSON format
           
           ## What's Included
-          - **Web2App-v1.0.0-windows.zip** - Windows application (self-contained)
+          - **Web2App-windows.zip** - Windows application (self-contained)
           
           ## System Requirements
           - Windows 7 or higher
@@ -77,7 +79,7 @@ jobs:
           - Microsoft Edge WebView2 Runtime
           
           ## Installation
-          1. Download `Web2App-v1.0.0-windows.zip`
+          1. Download `Web2App-windows.zip`
           2. Extract the archive
           3. Run `Web2AppLauncher.exe`
           
@@ -89,7 +91,7 @@ jobs:
           ---
           
           **Made with ❤️ for the developer community**
-        files: Web2App-v1.0.0-windows.zip
+        files: Web2App-windows.zip
         draft: false
         prerelease: false
       env:
