@@ -1,0 +1,98 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+    
+    - name: Restore dependencies
+      run: dotnet restore
+    
+    - name: Build
+      run: dotnet build -c Release --no-restore
+    
+    - name: Publish Windows Release
+      run: dotnet publish -c Release -o ./publish-windows --self-contained -r win-x64
+    
+    - name: Create Windows ZIP
+      shell: powershell
+      run: |
+        Compress-Archive -Path ./publish-windows -DestinationPath Web2App-v1.0.0-windows.zip
+    
+    - name: Upload Windows Build
+      uses: actions/upload-artifact@v3
+      with:
+        name: windows-build
+        path: Web2App-v1.0.0-windows.zip
+  
+  create-release:
+    needs: build-windows
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Download Windows Build
+      uses: actions/download-artifact@v3
+      with:
+        name: windows-build
+    
+    - name: Create Release
+      uses: actions/create-release@v1
+      id: create_release
+      with:
+        tag_name: v1.0.0
+        release_name: Release 1.0.0
+        body: |
+          # Web2App v1.0.0 - Initial Release
+          
+          ## Features
+          - Create desktop applications from web addresses
+          - Support for custom icons (ICO and PNG formats)
+          - Automatic PNG to ICO format conversion
+          - Desktop shortcut creation
+          - User-Agent configuration for each application
+          - Isolated directory for each application
+          - Configuration saved in JSON format
+          
+          ## System Requirements
+          - Windows 7 or higher
+          - .NET 8.0 Runtime (included in the release)
+          - Microsoft Edge WebView2 Runtime
+          
+          ## Installation
+          1. Download `Web2App-v1.0.0-windows.zip`
+          2. Extract the archive
+          3. Run `Web2AppLauncher.exe`
+          
+          ## Documentation
+          - [README](https://github.com/JunDevX/Web2App/blob/main/README.md)
+          - [English README](https://github.com/JunDevX/Web2App/blob/main/languages/readme-en.md)
+          - [Contributing Guidelines](https://github.com/JunDevX/Web2App/blob/main/CONTRIBUTING.md)
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Upload Windows Release Asset
+      uses: actions/upload-release-asset@v1
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./Web2App-v1.0.0-windows.zip
+        asset_name: Web2App-v1.0.0-windows.zip
+        asset_content_type: application/zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
