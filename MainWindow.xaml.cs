@@ -2,10 +2,11 @@
 using System.IO;
 using System.Windows;
 using Microsoft.Win32;
+using Wpf.Ui.Controls;
 
 namespace Web2AppLauncher
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow : FluentWindow
     {
         private string _selectedIconPath = "";
 
@@ -16,7 +17,7 @@ namespace Web2AppLauncher
 
         private void TxtUrl_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
-            // Автоматически подставляем URL в качестве названия, если имя еще не введено
+            // Автоматически подставляем URL в качестве названия, если имя еще не введено или совпадает
             if (string.IsNullOrWhiteSpace(TxtName.Text) || TxtName.Text == TxtUrl.Text)
             {
                 TxtName.Text = TxtUrl.Text;
@@ -45,7 +46,12 @@ namespace Web2AppLauncher
 
             if (string.IsNullOrEmpty(url))
             {
-                MessageBox.Show("Введите URL!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                // Явно указываем System.Windows, чтобы избежать конфликта с Wpf.Ui.Controls
+                System.Windows.MessageBox.Show(
+                    "Введите URL!", 
+                    "Ошибка", 
+                    System.Windows.MessageBoxButton.OK, 
+                    System.Windows.MessageBoxImage.Warning);
                 return;
             }
 
@@ -86,11 +92,21 @@ namespace Web2AppLauncher
                 // Создаем ярлык на рабочем столе
                 CreateShortcut(safeName, appDir, iconDestination);
 
-                MessageBox.Show($"Приложение '{appName}' успешно создано и добавлено на Рабочий стол!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                // Явно указываем System.Windows
+                System.Windows.MessageBox.Show(
+                    $"Приложение '{appName}' успешно создано и добавлено на Рабочий стол!", 
+                    "Успех", 
+                    System.Windows.MessageBoxButton.OK, 
+                    System.Windows.MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при создании: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                // Явно указываем System.Windows
+                System.Windows.MessageBox.Show(
+                    $"Ошибка при создании: {ex.Message}", 
+                    "Ошибка", 
+                    System.Windows.MessageBoxButton.OK, 
+                    System.Windows.MessageBoxImage.Error);
             }
         }
 
@@ -122,15 +138,14 @@ namespace Web2AppLauncher
             var shortcut = shell.CreateShortcut(shortcutPath);
 
             shortcut.TargetPath = System.Diagnostics.Process.GetCurrentProcess().MainModule!.FileName;
-            // Передаем путь к конфигу с явным экранированием кавычек
             shortcut.Arguments = $"\"{appDir}\"";
             shortcut.WorkingDirectory = appDir;
-
+            
             if (File.Exists(iconPath))
             {
                 shortcut.IconLocation = iconPath;
             }
-
+            
             shortcut.Save();
         }
     }
