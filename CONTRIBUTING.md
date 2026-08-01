@@ -1,6 +1,6 @@
 # Руководство по контрибьютингу
 
-Russian | [English](./contr-en.md)
+Russian | [English](./languages/contr-en.md)
 
 Спасибо за интерес к Web2App! Мы приветствуем вклад от всех участников сообщества.
 
