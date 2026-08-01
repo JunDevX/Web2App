@@ -1,5 +1,13 @@
 # README Translation Guide
 
+[Russian](#russian-version) | [English](#english-version)
+
+---
+
+## Russian Version
+
+# Руководство по переводу README
+
 [Russian](../README.md) | [English](./readme-en.md) | Help with Translation
 
 ## Мы нуждаемся в вашей помощи!
@@ -95,9 +103,11 @@ languages/
 
 ---
 
-**English Version:**
+## English Version
 
 # README Translation Guide
+
+[Russian](../README.md) | [English](./readme-en.md) | Help with Translation
 
 ## We Need Your Help!
 
