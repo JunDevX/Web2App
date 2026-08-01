@@ -1,0 +1,91 @@
+name: Build and Release (Linux)
+
+on:
+  push:
+    tags:
+      - 'Linux*'   # Сработает при push тегов вида Linux, Linux-v1, etc.
+  workflow_dispatch: # Позволяет запускать вручную из вкладки Actions
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+    
+    - name: Restore dependencies
+      run: dotnet restore
+    
+    - name: Build
+      run: dotnet build -c Release --no-restore
+    
+    - name: Publish Linux Release
+      # Сборка self-contained для 64-битного Linux
+      run: dotnet publish -c Release -o ./publish-linux --self-contained -r linux-x64
+    
+    - name: Create Linux Archive (tar.gz)
+      run: |
+        tar -czvf Web2App-linux-x64.tar.gz -C ./publish-linux .
+    
+    - name: Upload Linux Build Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: linux-build
+        path: Web2App-linux-x64.tar.gz
+        retention-days: 1
+
+  create-release:
+    needs: build-linux
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Права на создание релиза
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Download Linux Build
+      uses: actions/download-artifact@v4
+      with:
+        name: linux-build
+    
+    - name: Create Release and Upload Asset
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: Linux        # Жестко заданный тег Linux
+        name: Linux Update    # Название релиза
+        body: |
+          # Web2App - Linux Release
+          
+          ## Features
+          - Create desktop applications from web addresses
+          - Support for custom icons (ICO and PNG formats)
+          - Automatic PNG to ICO format conversion
+          - Isolated directory for each application
+          - Configuration saved in JSON format
+          
+          ## What's Included
+          - **Web2App-linux-x64.tar.gz** - Linux self-contained application (x64)
+          
+          ## System Requirements
+          - Any standard 64-bit Linux distribution (Ubuntu, Fedora, Debian, etc.)
+          - .NET 8.0 Runtime (included in the release)
+          
+          ## Installation
+          1. Download `Web2App-linux-x64.tar.gz`
+          2. Extract the archive: `tar -xvf Web2App-linux-x64.tar.gz`
+          3. Give executable permissions: `chmod +x Web2AppLauncher` (or main executable)
+          4. Run `./Web2AppLauncher`
+          
+          ---
+          
+          **Made with ❤️ for the developer community**
+        files: Web2App-linux-x64.tar.gz
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
