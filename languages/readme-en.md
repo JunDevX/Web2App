@@ -1,5 +1,7 @@
 # Web2App (W2A)
 
+![C#](https://img.shields.io/badge/C%23-239120?style=for-the-badge&logo=c-sharp&logoColor=white) ![DevKit](https://img.shields.io/badge/DevKit-0078D4?style=for-the-badge&logo=visual-studio&logoColor=white)
+
 [Russian](../README.md) | English | [Help with Translation](./readme-help.md)
 
 Convert any website into a full-featured desktop application.
