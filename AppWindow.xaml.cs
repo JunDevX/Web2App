@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Input;
 using Microsoft.Web.WebView2.Core;
 
 namespace Web2AppLauncher
@@ -43,7 +44,7 @@ namespace Web2AppLauncher
                 this.Icon = new System.Windows.Media.Imaging.BitmapImage(new Uri(iconPath));
             }
 
-            // 🚀 МАКСИМАЛЬНОЕ GPU-УСКОРЕНИЕ для WebView2
+            // GPU-ускорение для WebView2
             string userDataFolder = Path.Combine(configDir, "WebViewData");
             var options = new CoreWebView2EnvironmentOptions(
                 additionalBrowserArguments: "--enable-gpu --enable-gpu-rasterization --enable-zero-copy --ignore-gpu-blocklist --enable-features=UseSkiaRenderer,CanvasOopRasterization --enable-accelerated-2d-canvas --disable-features=CalculateNativeWinOcclusion"
@@ -52,28 +53,88 @@ namespace Web2AppLauncher
             var env = await CoreWebView2Environment.CreateAsync(null, userDataFolder, options);
             await webView.EnsureCoreWebView2Async(env);
 
-            // Если User-Agent не был передан — ставим современный дефолтный Chrome
             if (string.IsNullOrEmpty(userAgent))
             {
                 userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36";
             }
 
             webView.CoreWebView2.Settings.UserAgent = userAgent;
-
-            // Настройки для тяжелых сервисов
             webView.CoreWebView2.Settings.AreDevToolsEnabled = false;
             webView.CoreWebView2.Settings.IsStatusBarEnabled = false;
             webView.CoreWebView2.Settings.IsWebMessageEnabled = true;
 
-            // Автоматически разрешаем микрофон/камеру/уведомления/геолокацию
             webView.CoreWebView2.PermissionRequested += (s, args) =>
             {
                 args.State = CoreWebView2PermissionState.Allow;
                 args.Handled = true;
             };
 
-            webView.Source = new Uri(url);
+            webView.SourceChanged += (s, args) =>
+            {
+                if (TxtUrl != null && webView.Source != null)
+                {
+                    TxtUrl.Text = webView.Source.ToString();
+                }
+            };
+
+            if (!string.IsNullOrEmpty(url))
+            {
+                webView.Source = new Uri(url);
+            }
         }
+
+        #region Управление окном (macOS Traffic Lights)
+
+        private void BtnClose_Click(object sender, RoutedEventArgs e) => this.Close();
+
+        private void BtnMinimize_Click(object sender, RoutedEventArgs e) => this.WindowState = WindowState.Minimized;
+
+        private void BtnMaximize_Click(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = this.WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+        }
+
+        #endregion
+
+        #region Навигация WebView2
+
+        private void BtnBack_Click(object sender, RoutedEventArgs e)
+        {
+            if (webView != null && webView.CanGoBack) webView.GoBack();
+        }
+
+        private void BtnForward_Click(object sender, RoutedEventArgs e)
+        {
+            if (webView != null && webView.CanGoForward) webView.GoForward();
+        }
+
+        private void BtnRefresh_Click(object sender, RoutedEventArgs e) => webView?.Reload();
+
+        private void BtnGo_Click(object sender, RoutedEventArgs e) => NavigateToUrl();
+
+        private void TxtUrl_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter) NavigateToUrl();
+        }
+
+        private void NavigateToUrl()
+        {
+            if (webView == null || string.IsNullOrWhiteSpace(TxtUrl.Text)) return;
+
+            string targetUrl = TxtUrl.Text.Trim();
+            if (!targetUrl.StartsWith("http://") && !targetUrl.StartsWith("https://"))
+            {
+                targetUrl = "https://" + targetUrl;
+            }
+
+            try
+            {
+                webView.Source = new Uri(targetUrl);
+            }
+            catch (UriFormatException) { }
+        }
+
+        #endregion
 
         private string ExtractJsonValue(string json, string key)
         {

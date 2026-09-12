@@ -2,11 +2,161 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
-        Title="Web2App" 
-        Height="768" Width="1024" 
-        WindowStartupLocation="CenterScreen">
-    
-    <!-- WebView2 занимает всё пространство, стандартный тайтлбар Windows сверху -->
-    <wv2:WebView2 x:Name="webView" />
-    
+        Title="Web2App v2.0" Height="700" Width="1100"
+        MinHeight="500" MinWidth="800"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent">
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="52" 
+                      GlassFrameThickness="0" 
+                      CornerRadius="12" 
+                      ResizeBorderThickness="6" />
+    </WindowChrome.WindowChrome>
+
+    <Window.Resources>
+        <!-- MacOS Circular Traffic Light Button Style -->
+        <Style x:Key="MacTrafficBtn" TargetType="Button">
+            <Setter Property="Width" Value="12"/>
+            <Setter Property="Height" Value="12"/>
+            <Setter Property="Margin" Value="4,0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Ellipse x:Name="bg" Fill="{TemplateBinding Background}"/>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bg" Property="Opacity" Value="0.85"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- MacOS Action Button Style (Toolbar) -->
+        <Style x:Key="MacToolBtn" TargetType="Button">
+            <Setter Property="Width" Value="32"/>
+            <Setter Property="Height" Value="28"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Margin" Value="2,0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" 
+                                Background="{TemplateBinding Background}" 
+                                CornerRadius="6" 
+                                SnapsToDevicePixels="True">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#1E000000"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#33000000"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Border CornerRadius="12" 
+            Background="#F6F6F6" 
+            BorderBrush="#D0D0D0" 
+            BorderThickness="1">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="20" ShadowDepth="4" Direction="270" Color="#000000" Opacity="0.25"/>
+        </Border.Effect>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="52"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Top Header & Navigation Bar -->
+            <Border Grid.Row="0" Background="#EFEFF0" CornerRadius="12,12,0,0" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1">
+                <Grid Margin="12,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- macOS Window Traffic Light Buttons -->
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="4,0,16,0" WindowChrome.IsHitTestVisibleInChrome="True">
+                        <Button x:Name="BtnClose" Style="{StaticResource MacTrafficBtn}" Background="#FF5F56" Click="BtnClose_Click" ToolTip="Закрыть"/>
+                        <Button x:Name="BtnMinimize" Style="{StaticResource MacTrafficBtn}" Background="#FFBD2E" Click="BtnMinimize_Click" ToolTip="Свернуть"/>
+                        <Button x:Name="BtnMaximize" Style="{StaticResource MacTrafficBtn}" Background="#27C93F" Click="BtnMaximize_Click" ToolTip="Развернуть"/>
+                    </StackPanel>
+
+                    <!-- Navigation Buttons -->
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,12,0" WindowChrome.IsHitTestVisibleInChrome="True">
+                        <Button x:Name="BtnBack" Style="{StaticResource MacToolBtn}" Click="BtnBack_Click" ToolTip="Назад">
+                            <Path Data="M 12,6 L 6,12 L 12,18" Stroke="#4A4A4A" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                        </Button>
+                        <Button x:Name="BtnForward" Style="{StaticResource MacToolBtn}" Click="BtnForward_Click" ToolTip="Вперед">
+                            <Path Data="M 6,6 L 12,12 L 6,18" Stroke="#4A4A4A" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                        </Button>
+                        <Button x:Name="BtnRefresh" Style="{StaticResource MacToolBtn}" Click="BtnRefresh_Click" ToolTip="Обновить">
+                            <Path Data="M 12,5 A 6,6 0 1,1 6,11" Stroke="#4A4A4A" StrokeThickness="2" StrokeStartLineCap="Round"/>
+                        </Button>
+                    </StackPanel>
+
+                    <!-- Safari Address Bar -->
+                    <Border Grid.Column="2" 
+                            Background="#E3E3E5" 
+                            CornerRadius="8" 
+                            Height="32" 
+                            Margin="8,0"
+                            BorderBrush="#D1D1D3" 
+                            BorderThickness="1"
+                            WindowChrome.IsHitTestVisibleInChrome="True">
+                        <Grid Margin="10,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Path Grid.Column="0" Data="M6,10 L6,7 A3,3 0 0,1 12,7 L12,10 M4,10 L14,10 L14,17 L4,17 Z" 
+                                  Stroke="#7A7A7A" StrokeThickness="1.5" VerticalAlignment="Center" Margin="0,0,8,0"/>
+
+                            <TextBox x:Name="TxtUrl" 
+                                     Grid.Column="1" 
+                                     Background="Transparent" 
+                                     BorderThickness="0" 
+                                     VerticalAlignment="Center" 
+                                     FontSize="13" 
+                                     Foreground="#2C2C2C"
+                                     KeyDown="TxtUrl_KeyDown"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- Action Button -->
+                    <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center" WindowChrome.IsHitTestVisibleInChrome="True">
+                        <Button x:Name="BtnGo" Style="{StaticResource MacToolBtn}" Click="BtnGo_Click" ToolTip="Перейти">
+                            <Path Data="M 5,12 L 15,12 M 10,7 L 15,12 L 10,17" Stroke="#007AFF" StrokeThickness="2" StrokeStartLineCap="Round"/>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Main WebView2 Container -->
+            <Border Grid.Row="1" Background="#FFFFFF" CornerRadius="0,0,12,12" ClipToBounds="True">
+                <wv2:WebView2 x:Name="webView"/>
+            </Border>
+        </Grid>
+    </Border>
 </Window>

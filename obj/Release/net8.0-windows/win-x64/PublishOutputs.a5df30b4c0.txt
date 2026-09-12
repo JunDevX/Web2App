@@ -1,0 +1,2 @@
+C:\Users\starushka\Web2App\bin\Release\net8.0-windows\win-x64\publish\Web2AppLauncher.pdb
+C:\Users\starushka\Web2App\bin\Release\net8.0-windows\win-x64\publish\Web2AppLauncher.exe
