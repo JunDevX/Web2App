@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Web2AppLauncher")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d41fa5b1fe347836b0eeb6c8830a10e9c858c670")]
 [assembly: System.Reflection.AssemblyProductAttribute("Web2AppLauncher")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Web2AppLauncher")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

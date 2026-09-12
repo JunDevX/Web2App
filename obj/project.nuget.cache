@@ -1,12 +1,18 @@
 {
   "version": 2,
-  "dgSpecHash": "aOifevYl0f4=",
+  "dgSpecHash": "bGFJj2LFwiU=",
   "success": true,
-  "projectFilePath": "C:\\Users\\starushka\\Web2AppLauncher\\Web2AppLauncher.csproj",
+  "projectFilePath": "C:\\Users\\starushka\\Web2App\\Web2AppLauncher.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\starushka\\.nuget\\packages\\microsoft.net.illink.tasks\\8.0.29\\microsoft.net.illink.tasks.8.0.29.nupkg.sha512",
     "C:\\Users\\starushka\\.nuget\\packages\\microsoft.web.webview2\\1.0.2592.51\\microsoft.web.webview2.1.0.2592.51.nupkg.sha512",
-    "C:\\Users\\starushka\\.nuget\\packages\\microsoft.win32.systemevents\\10.0.10\\microsoft.win32.systemevents.10.0.10.nupkg.sha512",
-    "C:\\Users\\starushka\\.nuget\\packages\\system.drawing.common\\10.0.10\\system.drawing.common.10.0.10.nupkg.sha512"
+    "C:\\Users\\starushka\\.nuget\\packages\\microsoft.win32.systemevents\\8.0.0\\microsoft.win32.systemevents.8.0.0.nupkg.sha512",
+    "C:\\Users\\starushka\\.nuget\\packages\\system.drawing.common\\8.0.10\\system.drawing.common.8.0.10.nupkg.sha512",
+    "C:\\Users\\starushka\\.nuget\\packages\\wpf-ui\\4.3.0\\wpf-ui.4.3.0.nupkg.sha512",
+    "C:\\Users\\starushka\\.nuget\\packages\\wpf-ui.abstractions\\4.3.0\\wpf-ui.abstractions.4.3.0.nupkg.sha512",
+    "C:\\Users\\starushka\\.nuget\\packages\\microsoft.netcore.app.runtime.win-x64\\8.0.29\\microsoft.netcore.app.runtime.win-x64.8.0.29.nupkg.sha512",
+    "C:\\Users\\starushka\\.nuget\\packages\\microsoft.windowsdesktop.app.runtime.win-x64\\8.0.29\\microsoft.windowsdesktop.app.runtime.win-x64.8.0.29.nupkg.sha512",
+    "C:\\Users\\starushka\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.win-x64\\8.0.29\\microsoft.aspnetcore.app.runtime.win-x64.8.0.29.nupkg.sha512"
   ],
   "logs": []
 }

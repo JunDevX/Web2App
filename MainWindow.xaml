@@ -1,69 +1,155 @@
-﻿<ui:FluentWindow x:Class="Web2AppLauncher.MainWindow"
+﻿<Window x:Class="Web2AppLauncher.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-        Title="Генератор Web2App" 
-        Height="600" Width="600"
+        Title="Генератор Web2App" Height="680" Width="520"
         WindowStartupLocation="CenterScreen"
-        ExtendsContentIntoTitleBar="True"
-        WindowCornerPreference="Round">
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ResizeMode="CanMinimize">
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/> <!-- Место для панели заголовка -->
-            <RowDefinition Height="*"/>    <!-- Основной контент -->
-        </Grid.RowDefinitions>
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="42" 
+                      GlassFrameThickness="0" 
+                      CornerRadius="12" 
+                      ResizeBorderThickness="4" />
+    </WindowChrome.WindowChrome>
 
-        <!-- Панель заголовка с крестиком, свернуть и развернуть -->
-        <ui:TitleBar Grid.Row="0" Title="Генератор Web2App" ShowMinimize="True" ShowMaximize="True" ShowClose="True" />
+    <Window.Resources>
+        <!-- macOS Circular Buttons Style -->
+        <Style x:Key="MacTrafficBtn" TargetType="Button">
+            <Setter Property="Width" Value="12"/>
+            <Setter Property="Height" Value="12"/>
+            <Setter Property="Margin" Value="4,0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Ellipse x:Name="bg" Fill="{TemplateBinding Background}"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bg" Property="Opacity" Value="0.8"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
-        <!-- Основной контент с прокруткой (сдвинут в Row="1") -->
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-            <Grid Margin="24">
-                <StackPanel>
+        <!-- Custom Input Field Style -->
+        <Style x:Key="MacInput" TargetType="TextBox">
+            <Setter Property="Background" Value="#2A2A2C"/>
+            <Setter Property="Foreground" Value="#EEEEEE"/>
+            <Setter Property="BorderBrush" Value="#3D3D40"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="border" 
+                                Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                CornerRadius="6">
+                            <ScrollViewer x:Name="PART_ContentHost"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="#007AFF"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Border CornerRadius="12" Background="#1E1E1E" BorderBrush="#333333" BorderThickness="1">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="25" ShadowDepth="5" Direction="270" Color="#000000" Opacity="0.5"/>
+        </Border.Effect>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="42"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- TitleBar (macOS Traffic Lights) -->
+            <Border Grid.Row="0" Background="#282828" CornerRadius="12,12,0,0" BorderBrush="#333333" BorderThickness="0,0,0,1">
+                <Grid Margin="12,0">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" WindowChrome.IsHitTestVisibleInChrome="True">
+                        <Button x:Name="BtnClose" Style="{StaticResource MacTrafficBtn}" Background="#FF5F56" Click="BtnClose_Click"/>
+                        <Button x:Name="BtnMinimize" Style="{StaticResource MacTrafficBtn}" Background="#FFBD2E" Click="BtnMinimize_Click"/>
+                        <Button Style="{StaticResource MacTrafficBtn}" Background="#4B4B4B" IsEnabled="False"/>
+                    </StackPanel>
                     
-                    <!-- Заголовок -->
-                    <TextBlock Text="Создание Web2App" FontSize="28" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorPrimaryBrush}" Margin="0,0,0,4"/>
-                    <TextBlock Text="Превратите любой веб-сайт в нативное приложение Windows 11" FontSize="14" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,24"/>
+                    <TextBlock Text="Генератор Web2App" 
+                               Foreground="#888888" 
+                               FontSize="13" 
+                               FontWeight="Medium" 
+                               HorizontalAlignment="Center" 
+                               VerticalAlignment="Center"/>
+                </Grid>
+            </Border>
 
-                    <!-- Карточка: Основные настройки -->
-                    <ui:Card Padding="16" Margin="0,0,0,16">
-                        <StackPanel>
-                            <TextBlock Text="Основные настройки" FontWeight="SemiBold" FontSize="16" Foreground="{DynamicResource TextFillColorPrimaryBrush}" Margin="0,0,0,12"/>
-                            
-                            <TextBlock Text="URL адрес" FontWeight="Medium" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
-                            <ui:TextBox x:Name="TxtUrl" PlaceholderText="https://example.com" TextChanged="TxtUrl_TextChanged" Margin="0,0,0,12"/>
+            <!-- Main Content -->
+            <StackPanel Grid.Row="1" Margin="24">
+                <TextBlock Text="Создание Web2App" Foreground="#FFFFFF" FontSize="22" FontWeight="Bold" Margin="0,0,0,4"/>
+                <TextBlock Text="Превратите любой веб-сайт в нативное приложение" Foreground="#8E8E93" FontSize="13" Margin="0,0,0,20"/>
 
-                            <TextBlock Text="Название приложения" FontWeight="Medium" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
-                            <ui:TextBox x:Name="TxtName" PlaceholderText="Мое приложение"/>
-                        </StackPanel>
-                    </ui:Card>
+                <!-- Group 1 -->
+                <Border Background="#252528" CornerRadius="8" Padding="16" Margin="0,0,0,16" BorderBrush="#333336" BorderThickness="1">
+                    <StackPanel>
+                        <TextBlock Text="Основные настройки" Foreground="#FFFFFF" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,12"/>
+                        
+                        <TextBlock Text="URL адрес" Foreground="#AAA" FontSize="12" Margin="0,0,0,6"/>
+                        <TextBox x:Name="TxtUrl" Style="{StaticResource MacInput}" Text="https://example.com" Margin="0,0,0,12"/>
 
-                    <!-- Карточка: Дополнительно -->
-                    <ui:Card Padding="16" Margin="0,0,0,16">
-                        <StackPanel>
-                            <TextBlock Text="Дополнительно" FontWeight="SemiBold" FontSize="16" Foreground="{DynamicResource TextFillColorPrimaryBrush}" Margin="0,0,0,12"/>
-                            
-                            <TextBlock Text="Иконка (.ico или .png)" FontWeight="Medium" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
-                            <Grid Margin="0,0,0,12">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <ui:TextBox x:Name="TxtIcon" IsReadOnly="True" PlaceholderText="Иконка не выбрана" Margin="0,0,8,0"/>
-                                <ui:Button Grid.Column="1" Content="Обзор..." Click="BtnBrowseIcon_Click"/>
-                            </Grid>
+                        <TextBlock Text="Название приложения" Foreground="#AAA" FontSize="12" Margin="0,0,0,6"/>
+                        <TextBox x:Name="TxtName" Style="{StaticResource MacInput}" Text="Мое приложение"/>
+                    </StackPanel>
+                </Border>
 
-                            <TextBlock Text="User-Agent" FontWeight="Medium" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
-                            <ui:TextBox x:Name="TxtUserAgent" Text="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36" TextWrapping="Wrap"/>
-                        </StackPanel>
-                    </ui:Card>
+                <!-- Group 2 -->
+                <Border Background="#252528" CornerRadius="8" Padding="16" Margin="0,0,0,20" BorderBrush="#333336" BorderThickness="1">
+                    <StackPanel>
+                        <TextBlock Text="Дополнительно" Foreground="#FFFFFF" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,12"/>
 
-                    <!-- Кнопка действия -->
-                    <ui:Button Content="Создать приложение" Appearance="Primary" Height="44" FontSize="15" FontWeight="SemiBold" HorizontalAlignment="Stretch" Click="BtnCreate_Click"/>
-                    
-                </StackPanel>
-            </Grid>
-        </ScrollViewer>
-    </Grid>
-</ui:FluentWindow>
+                        <TextBlock Text="Иконка (.ico)" Foreground="#AAA" FontSize="12" Margin="0,0,0,6"/>
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="TxtIcon" Style="{StaticResource MacInput}" IsReadOnly="True" Text="Иконка не выбрана" Grid.Column="0" Margin="0,0,8,0"/>
+                            <Button x:Name="BtnBrowse" Content="Обзор..." Grid.Column="1" Padding="12,0" Background="#3A3A3C" Foreground="#FFF" BorderThickness="0" Click="BtnBrowse_Click">
+                                <Button.Resources>
+                                    <Style TargetType="Border">
+                                        <Setter Property="CornerRadius" Value="6"/>
+                                    </Style>
+                                </Button.Resources>
+                            </Button>
+                        </Grid>
+
+                        <TextBlock Text="User-Agent" Foreground="#AAA" FontSize="12" Margin="0,0,0,6"/>
+                        <TextBox x:Name="TxtUserAgent" Style="{StaticResource MacInput}" TextWrapping="Wrap" Height="50"
+                                 Text="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Action Button -->
+                <Button x:Name="BtnCreate" Content="Создать приложение" Height="40" Background="#007AFF" Foreground="White" FontSize="14" FontWeight="Medium" BorderThickness="0" Click="BtnCreate_Click">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="8"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>

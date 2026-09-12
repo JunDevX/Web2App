@@ -2,11 +2,10 @@
 using System.IO;
 using System.Windows;
 using Microsoft.Win32;
-using Wpf.Ui.Controls;
 
 namespace Web2AppLauncher
 {
-    public partial class MainWindow : FluentWindow
+    public partial class MainWindow : Window
     {
         private string _selectedIconPath = "";
 
@@ -15,16 +14,11 @@ namespace Web2AppLauncher
             InitializeComponent();
         }
 
-        private void TxtUrl_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
-        {
-            // Автоматически подставляем URL в качестве названия, если имя еще не введено или совпадает
-            if (string.IsNullOrWhiteSpace(TxtName.Text) || TxtName.Text == TxtUrl.Text)
-            {
-                TxtName.Text = TxtUrl.Text;
-            }
-        }
+        private void BtnClose_Click(object sender, RoutedEventArgs e) => this.Close();
 
-        private void BtnBrowseIcon_Click(object sender, RoutedEventArgs e)
+        private void BtnMinimize_Click(object sender, RoutedEventArgs e) => this.WindowState = WindowState.Minimized;
+
+        private void BtnBrowse_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog dlg = new OpenFileDialog
             {
@@ -46,7 +40,6 @@ namespace Web2AppLauncher
 
             if (string.IsNullOrEmpty(url))
             {
-                // Явно указываем System.Windows, чтобы избежать конфликта с Wpf.Ui.Controls
                 System.Windows.MessageBox.Show(
                     "Введите URL!", 
                     "Ошибка", 
@@ -62,20 +55,16 @@ namespace Web2AppLauncher
 
             try
             {
-                // Формируем безопасное имя папки
                 string safeName = string.Join("_", appName.Split(Path.GetInvalidFileNameChars()));
                 if (string.IsNullOrEmpty(safeName)) safeName = "Web2App";
 
-                // Создаем изолированную директорию для приложения
                 string appDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Web2Apps", safeName);
                 Directory.CreateDirectory(appDir);
 
-                // Сохраняем файл конфигурации
                 string configPath = Path.Combine(appDir, "config.json");
                 string json = $"{{\"Url\":\"{url}\",\"UserAgent\":\"{userAgent}\",\"Title\":\"{appName}\",\"AppId\":\"Web2App.{safeName}\"}}";
                 File.WriteAllText(configPath, json);
 
-                // Обработка иконки (.png конвертируется в .ico для Windows)
                 string iconDestination = Path.Combine(appDir, "app.ico");
                 if (!string.IsNullOrEmpty(_selectedIconPath) && File.Exists(_selectedIconPath))
                 {
@@ -89,10 +78,8 @@ namespace Web2AppLauncher
                     }
                 }
 
-                // Создаем ярлык на рабочем столе
                 CreateShortcut(safeName, appDir, iconDestination);
 
-                // Явно указываем System.Windows
                 System.Windows.MessageBox.Show(
                     $"Приложение '{appName}' успешно создано и добавлено на Рабочий стол!", 
                     "Успех", 
@@ -101,7 +88,6 @@ namespace Web2AppLauncher
             }
             catch (Exception ex)
             {
-                // Явно указываем System.Windows
                 System.Windows.MessageBox.Show(
                     $"Ошибка при создании: {ex.Message}", 
                     "Ошибка", 
