@@ -1,3 +1,3 @@
 [submodule "folder-name"]
-    path = developer -> profile
+    path = ./developer -> profile
     url = https://github.com/JunDevX
